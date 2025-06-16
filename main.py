@@ -1,21 +1,23 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 import uvicorn
 
 app = FastAPI(title="Canary Deployment Demo")
 
-APP_VERSION = "v2.0"
+APP_VERSION = "v1.0"
 
 @app.get("/")
 async def root():
     return {
         "message": "Hello from Canary App",
         "version": APP_VERSION,
-        "color": "green"
+        "color": "blue"
     }
 
 @app.get("/health")
 async def health():
-    return {"status": "healthy"}
+    # Simulate a failure
+    raise HTTPException(status_code=500, detail="Simulated internal server error in health check")
+    # return {"status": "healthy"} # Original healthy response
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
